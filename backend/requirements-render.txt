@@ -1,0 +1,36 @@
+# PayFlow Copilot — Render Production Dependencies
+# Contains only packages genuinely imported by runtime application code.
+# Excluded: torch, transformers, sentence-transformers, scikit-learn, scipy, numpy
+#           (not imported anywhere in runtime; embedding uses google-genai directly)
+# Excluded: pytest, pytest-asyncio, tenacity, rich (test-only)
+
+# Core Web Framework
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+starlette==1.10.0
+python-multipart==0.0.22
+
+# Razorpay Checkout
+razorpay==2.0.1
+
+# Configuration & Data Validation
+pydantic==2.14.3
+pydantic-settings==2.16.2
+email-validator>=2.1.0
+python-dotenv==1.2.4
+
+# Database & ORM
+sqlalchemy[asyncio]==2.1.8
+greenlet==3.5.6
+alembic==1.20.1
+psycopg[binary]==3.2.4
+qdrant-client>=1.12.0
+pypdf>=5.0.0
+
+# Authentication & Cryptography
+pwdlib[argon2]>=0.2.0
+PyJWT>=2.8.0
+
+# AI, LLM & Embeddings (runtime imports only)
+google-genai==3.0.0
+groq==1.7.0
