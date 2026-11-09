@@ -1,0 +1,9 @@
+[
+  {"case_id": "refund-01", "question": "How long do failed transaction refunds take?", "relevant_document_ids": ["failed-refunds-policy"], "relevant_chunk_ids": []},
+  {"case_id": "refund-02", "question": "When is a refund eligible?", "relevant_document_ids": ["refund-eligibility-policy"], "relevant_chunk_ids": []},
+  {"case_id": "duplicate-01", "question": "What should I do about a duplicate payment?", "relevant_document_ids": ["duplicate-payment-policy"], "relevant_chunk_ids": []},
+  {"case_id": "settlement-01", "question": "When does a card payment settle?", "relevant_document_ids": ["settlement-policy"], "relevant_chunk_ids": []},
+  {"case_id": "dispute-01", "question": "Can this transaction be disputed?", "relevant_document_ids": ["dispute-eligibility-policy"], "relevant_chunk_ids": []},
+  {"case_id": "timeline-01", "question": "How long can payment processing take?", "relevant_document_ids": ["processing-timelines-policy"], "relevant_chunk_ids": []},
+  {"case_id": "unsupported-01", "question": "What is the weather tomorrow?", "relevant_document_ids": [], "relevant_chunk_ids": []}
+]

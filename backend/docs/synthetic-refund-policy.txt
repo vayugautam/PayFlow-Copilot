@@ -1,0 +1,11 @@
+SYNTHETIC DEMO CONTENT — NOT AN ACTUAL FINANCIAL INSTITUTION POLICY
+
+PayFlow Copilot demonstration refund policy
+
+Customers may request a refund for an eligible duplicate or incorrectly
+charged payment within 30 calendar days. Approved refunds are normally sent
+to the original payment method within 5 to 10 business days. Processing times
+can vary by card issuer or bank.
+
+This fictional document exists only to demonstrate document ingestion and
+semantic retrieval. It is not financial, legal, or customer-service advice.

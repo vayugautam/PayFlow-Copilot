@@ -1,0 +1,20 @@
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, CheckCircle2, CircleAlert, Clock3, Layers3 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Card, EmptyState, ErrorState, StatusPill } from "../../components/ui";
+import { api, getApiError } from "../../lib/api";
+import { compactId, formatCurrency, formatDate } from "../../lib/utils";
+import type { DisputePage, TransactionPage } from "../../types/api";
+import { useAuth } from "../auth/AuthContext";
+import { RazorpayCheckout } from "../payments/RazorpayCheckout";
+
+export function DashboardPage() {
+  const { user } = useAuth();
+  const transactions = useQuery({ queryKey: ["transactions", "dashboard"], queryFn: async () => (await api.get<TransactionPage>("/transactions?page=1&page_size=5")).data });
+  const disputes = useQuery({ queryKey: ["disputes", "dashboard"], queryFn: async () => (await api.get<DisputePage>("/disputes?page=1&page_size=5")).data });
+  if (transactions.isError || disputes.isError) return <ErrorState message={getApiError(transactions.error ?? disputes.error)} onRetry={() => { void transactions.refetch(); void disputes.refetch(); }} />;
+  const tx = transactions.data?.items ?? [];
+  const dp = disputes.data?.items ?? [];
+  const metrics = [{ label: "Total transactions", value: transactions.data?.total, icon: Layers3, tone: "blue" }, { label: "Successful", value: tx.filter((item) => item.status === "successful").length, icon: CheckCircle2, tone: "green" }, { label: "Failed", value: tx.filter((item) => item.status === "failed").length, icon: CircleAlert, tone: "red" }, { label: "Active disputes", value: dp.filter((item) => !["CANCELLED", "RESOLVED", "REJECTED"].includes(item.status)).length, icon: Clock3, tone: "amber" }];
+  return <div className="page-stack"><div className="welcome"><div><span className="eyebrow">Overview</span><h2>Good morning, {user?.email.split("@")[0]}</h2><p className="muted">A clear view of your payment activity and support workload.</p></div><div><Link className="button button-secondary" to="/transactions">View transactions <ArrowRight size={16} /></Link><RazorpayCheckout /></div></div><div className="metric-grid">{metrics.map(({ label, value, icon: Icon, tone }) => <Card key={label} className="metric-card"><div className={`metric-icon ${tone}`}><Icon size={18} /></div><div><span className="muted">{label}</span><strong>{transactions.isLoading || disputes.isLoading ? "—" : value}</strong></div></Card>)}</div><div className="dashboard-grid"><Card><div className="section-heading"><div><span className="eyebrow">Activity</span><h3>Recent transactions</h3></div><Link to="/transactions">View all <ArrowRight size={15} /></Link></div>{transactions.isLoading ? <div className="loading-lines">{[1,2,3].map((x) => <span key={x} />)}</div> : tx.length ? <div className="table-wrap"><table><thead><tr><th>Merchant</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>{tx.map((item) => <tr key={item.id}><td><strong>{item.merchant}</strong><small>{compactId(item.id)}</small></td><td>{formatCurrency(item.amount, item.currency)}</td><td><StatusPill status={item.status} /></td><td>{formatDate(item.occurred_at)}</td></tr>)}</tbody></table></div> : <EmptyState title="No transactions yet" description="Your recent payment activity will appear here." />}</Card><Card><div className="section-heading"><div><span className="eyebrow">Support</span><h3>Recent disputes</h3></div><Link to="/disputes">View all <ArrowRight size={15} /></Link></div>{disputes.isLoading ? <div className="loading-lines">{[1,2,3].map((x) => <span key={x} />)}</div> : dp.length ? <div className="dispute-list">{dp.map((item) => <div className="dispute-row" key={item.id}><div><strong>{item.title}</strong><small>{compactId(item.transaction_id)} · {formatDate(item.created_at)}</small></div><StatusPill status={item.status} /></div>)}</div> : <EmptyState title="No disputes" description="Drafted and submitted disputes will be shown here." />}</Card></div></div>;
+}
