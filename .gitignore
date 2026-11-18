@@ -74,3 +74,10 @@ frontend/vite.config.d.ts
 
 # Machine-specific helper
 /powershell.cmd
+
+# Local project reports
+/PHASE_1_BACKEND_STABILIZATION_REPORT.md
+/PHASE_2_POSTGRESQL_INTEGRATION_REPORT.md
+/PHASE_3_EXTERNAL_PROVIDER_VERIFICATION_REPORT.md
+/FINAL_PROJECT_AUDIT.md
+/runtime-validation-report.md
