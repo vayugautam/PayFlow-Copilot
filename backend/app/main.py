@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 import logging
 import logging.config
@@ -11,6 +14,7 @@ from app.api.routes.knowledge import router as knowledge_router
 from app.api.routes.chat import router as chat_router
 from app.api.routes.disputes import router as disputes_router
 from app.api.routes.audit import router as audit_router
+from app.api.routes.docs import router as docs_router
 from app.api.routes.payments import router as payments_router
 from app.core.config import get_settings
 from app.core.observability import RequestContextFilter
@@ -29,10 +33,14 @@ cors_origins = list(
     )
 )
 
+DOCS_STATIC_DIR = Path(__file__).resolve().parent / "static" / "docs"
+
 app = FastAPI(
     title="PayFlow Copilot API",
     description="AI-powered payment support and dispute assistant",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url=None,
+    redoc_url=None,
 )
 app.state.settings = settings
 logging.basicConfig(
@@ -51,6 +59,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static/docs", StaticFiles(directory=DOCS_STATIC_DIR), name="docs-static")
+
+app.include_router(docs_router)
 
 
 @app.exception_handler(OperationalError)
@@ -101,12 +113,12 @@ app.include_router(audit_router, prefix="/api/v1", tags=["audit"])
 app.include_router(payments_router, prefix="/api/v1/payments", tags=["payments"])
 
 
-@app.get("/")
-def root():
-    return {
-        "message": "Welcome to PayFlow Copilot",
-        "status": "running"
-    }
+@app.get("/", include_in_schema=False)
+async def home():
+    return RedirectResponse(
+        url="https://payflow-copilot-ygja.onrender.com/login",
+        status_code=302,
+    )
 
 
 @app.get("/health")
